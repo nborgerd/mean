@@ -8,20 +8,21 @@ var express = require('express'),
     passport = require('passport'),
     logger = require('mean-logger');
 
+var https = require('https');
 /**
  * Main application entry file.
  * Please note that the order of loading is important.
  */
 
 // Load configurations
-// Set the node environment variable if not set before
+// Set the node enviornment variable if not set before
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Initializing system variables 
 var config = require('./config/config'),
     mongoose = require('mongoose');
 
-// Bootstrap db connection---nb
+// Bootstrap db connection
 var db = mongoose.connect(config.db);
 
 // Bootstrap models
@@ -72,8 +73,12 @@ walk(routes_path);
 
 // Start the app by listening on <port>
 var port = process.env.PORT || config.port;
-app.listen(port);
-console.log('Express app started on port ' + port);
+var options = config.httpsKeyOptions;
+
+https.createServer(options, app).listen(port, function(){
+	  console.log('Express server listening on port ' + port);
+	});
+//console.log('Express app started on port ' + port)
 
 // Initializing logger
 logger.init(app, passport, mongoose);
