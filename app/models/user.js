@@ -15,6 +15,7 @@ var UserSchema = new Schema({
         type: String,
         required: true
     },
+    group : String,
     email: String,
     username: {
         type: String,
