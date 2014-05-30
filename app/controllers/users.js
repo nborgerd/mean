@@ -4,7 +4,8 @@
  * Module dependencies.
  */
 var mongoose = require('mongoose'),
-    User = mongoose.model('User');
+    User = mongoose.model('User'),
+    _ = require('lodash');
 
 /**
  * Auth callback
@@ -54,8 +55,9 @@ exports.session = function(req, res) {
 exports.create = function(req, res, next) {
     var user = new User(req.body);
     var message = null;
-
+    console.log(req.body);
     user.provider = 'local';
+    user.group = 'guest';
     user.save(function(err) {
         if (err) {
             switch (err.code) {
@@ -78,14 +80,86 @@ exports.create = function(req, res, next) {
         });
     });
 };
-
+/*exports.update = function(req, res) {
+	console.log("Update");
+ //   var user = req.user;
+  //  console.log(req.body);
+ //   user = _.extend(user, req.body);
+//   console.log(req.body.user);
+/*    user.save(function(err) {
+        if (err) {
+            return res.send('users/signup', {
+                errors: err.errors
+      //          article: article
+            });
+        } else {
+            res.jsonp(user);
+        }
+    }); 
+    res.jsonp(req.user);
+}; */
+exports.update = function(req, res) {
+    console.log("Update");
+ //   console.log(req);
+    User.findOne({"username" : req.body.username}).exec(function(err, user) {
+       if (err) {
+           res.render('error', {
+               status: 500
+           });
+       } else {
+    	   user = _.extend(user, req.body);
+    	   user.save(function(err) {
+    	        if (err) {
+    	        	res.render('error', {
+    	                status: 500
+    	            });
+    	        } else {
+    	            res.jsonp(user);
+    	        }
+    	    }); 
+       }
+   });
+ 
+ };
+ exports.destroy = function(req, res) {
+	  console.log("Destroy");
+	  console.log(req.query.user);
+	//  res.jsonp({"status" : "OK"});
+	  User.findOne({"_id" : req.query.user}).exec(function(err, user) {
+	       if (err) {
+	           res.render('error', {
+	               status: 500
+	           });
+	       } else {
+	    	   user.remove(function(err) {
+	    	        if (err) {
+	    	        	res.render('error', {
+	    	                status: 500
+	    	            });
+	    	        } else {
+	    	            res.jsonp(user);
+	    	        }
+	    	    }); 
+	       };
+	  });
+	};
 /**
  * Send User
  */
 exports.me = function(req, res) {
     res.jsonp(req.user || null);
 };
-
+exports.all = function(req, res) {
+    User.find(function(err, users) {
+        if (err) {
+            res.render('error', {
+                status: 500
+            });
+        } else {
+            res.jsonp(users);
+        }
+    });
+};
 /**
  * Find user by id
  */
