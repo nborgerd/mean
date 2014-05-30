@@ -12,6 +12,7 @@ var mongoose = require('mongoose'),
  * Find article by id
  */
 exports.article = function(req, res, next, id) {
+	console.log('exports.article');
     Article.load(id, function(err, article) {
         if (err) return next(err);
         if (!article) return next(new Error('Failed to load article ' + id));
@@ -81,6 +82,9 @@ exports.destroy = function(req, res) {
  * Show an article
  */
 exports.show = function(req, res) {
+	console.log('Show');
+ 	console.log(req.ip);
+//	console.log('Afer Show');
     res.jsonp(req.article);
 };
 
