@@ -99,9 +99,7 @@ exports.create = function(req, res, next) {
     res.jsonp(req.user);
 }; */
 exports.update = function(req, res) {
-    console.log("Update");
- //   console.log(req);
-    User.findOne({"username" : req.body.username}).exec(function(err, user) {
+   /* User.findOne({"username" : req.body.username}).exec(function(err, user) {
        if (err) {
            res.render('error', {
                status: 500
@@ -118,14 +116,31 @@ exports.update = function(req, res) {
     	        }
     	    }); 
        }
-   });
- 
+   }); */
+	var query = {"username" : req.body.username};
+	findUser(query, function(err, user) {
+		if (err) {
+	           res.render('error', {
+	               status: 500
+	           });
+	       } else {
+	    	   user = _.extend(user, req.body);
+	    	   user.save(function(err) {
+	    	        if (err) {
+	    	        	res.render('error', {
+	    	                status: 500
+	    	            });
+	    	        } else {
+	    	            res.jsonp(user);
+	    	        }
+	    	    }); 
+	       }
+	});
  };
  exports.destroy = function(req, res) {
-	  console.log("Destroy");
-	  console.log(req.query.user);
-	//  res.jsonp({"status" : "OK"});
-	  User.findOne({"_id" : req.query.user}).exec(function(err, user) {
+	//  console.log("Destroy");
+	//  console.log(req.query.user);	  
+	/*  User.findOne({"_id" : req.query.user}).exec(function(err, user) {
 	       if (err) {
 	           res.render('error', {
 	               status: 500
@@ -141,7 +156,26 @@ exports.update = function(req, res) {
 	    	        }
 	    	    }); 
 	       };
-	  });
+	  }); */
+	 var query = {"_id" : req.query.user};
+	 findUser(query, function(err, user) {
+			if (err) {
+		           res.render('error', {
+		               status: 500
+		           });
+		       } else {
+		    	   user = _.extend(user, req.body);
+		    	   user.remove(function(err) {
+		    	        if (err) {
+		    	        	res.render('error', {
+		    	                status: 500
+		    	            });
+		    	        } else {
+		    	            res.jsonp(user);
+		    	        }
+		    	    }); 
+		       }
+		});
 	};
 /**
  * Send User
@@ -174,4 +208,9 @@ exports.user = function(req, res, next, id) {
             req.profile = user;
             next();
         });
+};
+
+var findUser = function(query, func)
+{
+	 User.findOne(query).exec(func);
 };
