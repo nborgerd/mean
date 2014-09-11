@@ -1,15 +1,14 @@
 'use strict';
 
-angular.module('mean.system').controller('HeaderController', ['$scope', 'Global', function ($scope, Global) {
+angular.module('mean.system').controller('HeaderController', ['$scope', '$http', 'Global', function ($scope, $http, Global) {
     $scope.global = Global;
-
-    $scope.menu = [{
-        'title': 'Articles',
-        'link': 'articles'
-    }, {
-        'title': 'Create New Article',
-        'link': 'articles/create'
-    }];
+    $scope.menus = [];
     
+    $http.get('/menu')
+    .then(function(result) {
+        $scope.menus = result.data;
+    });
+
+  // $(document).ready(function() {});
     $scope.isCollapsed = false;
 }]);
