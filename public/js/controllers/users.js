@@ -5,7 +5,7 @@ angular.module('mean.users').controller('UsersController', ['$scope', '$statePar
     $scope.selectedUser = null;
     $scope.sortField = undefined;
     $scope.reverse = false;
-    
+   
     $scope.open = function (size) {
 
         var modalInstance = $modal.open({
